@@ -33,6 +33,7 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
             table_id INTEGER NOT NULL,
+            name TEXT NOT NULL,
             date DATE NOT NULL,
             meal TEXT NOT NULL,
             phone TEXT NOT NULL,

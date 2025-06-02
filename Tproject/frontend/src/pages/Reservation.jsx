@@ -13,6 +13,18 @@ export default function Reservation() {
   const [cardNumber, setCardNumber] = useState("");
   const [guestCount, setGuestCount] = useState(1);
   const navigate = useNavigate();
+  const translateLocation = (location) => {
+  switch (location) {
+    case "window":
+      return "창가";
+    case "room":
+      return "방";
+    case "inside":
+      return "내부";
+    default:
+      return location; 
+  }
+};
 
 
   const handleLogout = async () => {
@@ -54,19 +66,21 @@ export default function Reservation() {
       return;
     }
 
-    
     if (selected < today) {
       alert("이전 날짜는 선택할 수 없습니다.");
+      setTables([]);
       return;
     }
 
     if (selected.getTime() === today.getTime()) {
       alert("당일 예약은 불가합니다.");
+      setTables([]);
       return;
     }
 
     if (selected > maxDate) {
       alert("30일 이내 날짜만 예약할 수 있습니다.");
+      setTables([]);
       return;
     }
 
@@ -79,6 +93,7 @@ export default function Reservation() {
     } catch (err) {
       console.error("에러:", err.response?.data || err.message);
       alert("테이블 불러오기 실패");
+      setTables([]);
     }
   };
 
@@ -205,7 +220,7 @@ export default function Reservation() {
                   setShowPopup(true);
                 }}
               >
-                <p>위치: {table.location}</p>
+                <p>위치: {translateLocation(table.location)}</p>
                 <p>인원: {table.capacity}명</p>
                 {table.is_reserved && (
                   <p style={{ fontStyle: "italic" }}>

@@ -1,6 +1,6 @@
 import sqlite3, re
 from flask import Blueprint, request, jsonify, session
-from datetime import datetime
+from datetime import datetime, timedelta
 from config import RESERVATIONS_DB, TABLES_DB, USERS_DB
 
 reservation_bp = Blueprint("reservation", __name__)
@@ -30,7 +30,7 @@ def make_reservation():
 
 
     # 입력 값 체크
-    required_fields = ["date", "meal", "table_id", "phone", "credit", "quantity"]
+    required_fields = ["date", "meal", "table_id", "name", "phone", "credit", "quantity"]
     for field in required_fields:
         if field not in data:
             return jsonify({"success": False, "message": f"{field} 필수 입력값입니다."}), 400
@@ -39,6 +39,7 @@ def make_reservation():
     date = data.get("date")
     meal = data.get("meal")
     table_id = data.get("table_id")
+    name = data.get("name")
     phone = data.get("phone")
     credit = data.get("credit")
     quantity = data.get("quantity")
@@ -50,10 +51,18 @@ def make_reservation():
     if not is_valid_credit(credit):
         return jsonify({"success": False, "message": "카드번호 형식이 올바르지 않습니다"}), 400
     
+
+    # 날짜 형식 검사
     try:
-        datetime.strptime(date, "%Y-%m-%d")
+        res_date = datetime.strptime(date, "%Y-%m-%d").date()
     except ValueError:
         return jsonify({"success": False, "message": "날짜 형식이 올바르지 않습니다. (YYYY-MM-DD)"}), 400
+
+
+    # 30일 초과 예약 차단
+    today = datetime.today().date()
+    if res_date > today + timedelta(days=30):
+        return jsonify({"success": False, "message": "예약은 오늘로부터 30일 이내 날짜만 가능합니다."}), 400
 
 
     try:
@@ -95,9 +104,9 @@ def make_reservation():
 
         # 예약 저장
         c.execute("""
-            INSERT INTO reservations (user_id, table_id, date, meal, phone, credit, quantity)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (user_id, table_id, date, meal, phone, credit, quantity))
+            INSERT INTO reservations (user_id, table_id, date, meal, name, phone, credit, quantity)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (user_id, table_id, date, meal, name, phone, credit, quantity))
         conn.commit()
 
 
