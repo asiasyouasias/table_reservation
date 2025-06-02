@@ -22,7 +22,8 @@ def is_valid_credit(credit):
 # 예약 기능
 @reservation_bp.route("/api/reservations", methods=["POST"])
 def make_reservation():
-    if "username" not in session:
+    print("세션 전체:", dict(session))
+    if "email" not in session:
         return jsonify({"success": False, "message": "로그인이 필요합니다"}), 401
 
     data = request.get_json()
@@ -34,7 +35,7 @@ def make_reservation():
         if field not in data:
             return jsonify({"success": False, "message": f"{field} 필수 입력값입니다."}), 400
 
-    user = session["username"]
+    user = session["email"]
     date = data.get("date")
     meal = data.get("meal")
     table_id = data.get("table_id")
@@ -115,7 +116,7 @@ def make_reservation():
 # 예약 취소 기능
 @reservation_bp.route("/api/reservations/cancel", methods=["POST"])
 def cancel_reservation():
-    if "username" not in session:
+    if "email" not in session:
         return jsonify({"success": False, "message": "로그인이 필요합니다"}), 401
 
     data = request.get_json()
@@ -135,7 +136,7 @@ def cancel_reservation():
         return jsonify({"success": False, "message": "날짜 형식이 올바르지 않습니다. (YYYY-MM-DD)"}), 400
 
 
-    user = session["username"]
+    user = session["email"]
 
     try:
         conn = sqlite3.connect(RES_DB)
