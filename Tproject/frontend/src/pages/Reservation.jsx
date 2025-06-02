@@ -103,6 +103,7 @@ export default function Reservation() {
       );
       alert("예약 성공!");
       setShowPopup(false);
+      handleSearch();
     } catch (err) {
       console.error("예약 실패:", err.response?.data || err.message);
       alert("예약 실패: " + (err.response?.data?.message || err.message));

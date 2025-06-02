@@ -1,24 +1,43 @@
-from flask import Flask
+from flask import Flask, request, session
 from flask_cors import CORS
 from routes.auth import auth_bp
 from routes.reservation import reservation_bp
 from routes.table import table_bp
 
+
+
 app = Flask(__name__)
 app.secret_key = 'key'
 
-# ✅ 세션 쿠키가 크로스사이트에서 동작하도록 설정
-app.config['SESSION_COOKIE_SAMESITE'] = 'None'
-app.config['SESSION_COOKIE_SECURE'] = False  # ⚠️ HTTPS 환경이면 True로 바꾸기
+@app.before_request
+def log_session_cookie():
+    print("💥 현재 요청에서 받은 쿠키:", request.cookies.get("session"))
+    print("💥 Flask 세션 내부 이메일:", session.get("email"))
+
+
+
 
 # ✅ CORS 설정
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
+CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
+
+@app.before_request
+def log_session_cookie():
+    print("💥 현재 요청에서 받은 쿠키:", request.cookies.get("session"))
+    print("💥 Flask 세션 내부 이메일:", session.get("email"))
+    print("💥 Flask 세션 내부 전체:", dict(session))
+
+# ✅ 세션 쿠키가 크로스사이트에서 동작하도록 설정
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_COOKIE_SECURE'] = False  # ⚠️ HTTPS 환경이면 True로 바꾸기
+#app.config['SESSION_COOKIE_DOMAIN'] = 'localhost' 
 
 
 # ✅ 블루프린트 등록
 app.register_blueprint(auth_bp)
 app.register_blueprint(reservation_bp)
 app.register_blueprint(table_bp)
+
+
 
 if __name__ == "__main__":
     app.run(port=5050, debug=True)

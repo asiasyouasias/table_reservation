@@ -70,6 +70,7 @@ def login():
     conn.close()
 
     if row and row[0] == password:
+        session.clear()
         session["email"] = email
         session.modified = True
         return jsonify({"success": True, "message": "로그인 성공!", "user":{"email": email}})

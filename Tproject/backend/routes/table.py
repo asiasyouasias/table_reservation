@@ -76,7 +76,7 @@ seed_tables()
 # 테이블 조회
 @table_bp.route("/api/tables", methods=["GET"])
 def get_available_tables():
-    if "username" not in session:
+    if "email" not in session:
         return jsonify({"success": False, "message": "로그인이 필요합니다"}), 401
     
     date = request.args.get("date")
@@ -92,7 +92,7 @@ def get_available_tables():
     except ValueError:
         return jsonify({"success": False, "message": "날짜 형식이 올바르지 않습니다 (YYYY-MM-DD)"}), 400
 
-    user = session["username"]
+    user = session["email"]
 
 
     try:
