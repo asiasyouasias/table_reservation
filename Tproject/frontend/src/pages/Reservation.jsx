@@ -41,18 +41,20 @@ export default function Reservation() {
   today.setDate(today.getDate());
   const minDate = today.toISOString().split("T")[0];
 
+  const selected = new Date(date);
+    const maxDate = new Date();
+    today.setHours(0, 0, 0, 0);
+    selected.setHours(0, 0, 0, 0);
+    maxDate.setDate(today.getDate() + 30);
+
+
   const handleSearch = async () => {
     if (!date) {
       alert("날짜를 선택하세요.");
       return;
     }
 
-    const selected = new Date(date);
-    const maxDate = new Date();
-    today.setHours(0, 0, 0, 0);
-    selected.setHours(0, 0, 0, 0);
-    maxDate.setDate(today.getDate() + 30);
-
+    
     if (selected < today) {
       alert("이전 날짜는 선택할 수 없습니다.");
       return;
@@ -81,6 +83,10 @@ export default function Reservation() {
   };
 
   const handleReserve = async () => {
+    if (selected > maxDate) {
+      alert("30일 이내 날짜만 예약할 수 있습니다.");
+      return;
+    }
 
     try {
       const res = await axios.post(
@@ -101,6 +107,7 @@ export default function Reservation() {
           },
         }
       );
+      
       alert("예약 성공!");
       setShowPopup(false);
       handleSearch();
