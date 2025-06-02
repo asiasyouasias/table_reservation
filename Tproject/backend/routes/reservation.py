@@ -174,6 +174,7 @@ def cancel_reservation():
 
         # 예약 삭제
         c.execute("DELETE FROM reservations WHERE id = ?", (reservation_id,))
+        conn.commit()
         conn.close()
 
 

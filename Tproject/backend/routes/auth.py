@@ -71,6 +71,7 @@ def login():
 
     if row and row[0] == password:
         session["email"] = email
+        session.modified = True
         return jsonify({"success": True, "message": "로그인 성공!", "user":{"email": email}})
     else:
         return jsonify({"success": False, "message": "아이디 또는 비밀번호 오류"}), 401
