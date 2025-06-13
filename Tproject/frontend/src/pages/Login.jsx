@@ -10,12 +10,12 @@ export default function Login() {
 
   const handleLogin = async () => {
   try {
-    // ✅ 기존 세션 정리
+    // 기존 세션 정리
     await axios.post("/api/logout", {}, {
       withCredentials: true
     });
 localStorage.removeItem("user");
-    // ✅ 로그인 요청
+    // 로그인 요청
     const res = await axios.post('/api/login', {
       email, password
     },{
@@ -24,7 +24,7 @@ localStorage.removeItem("user");
 
     localStorage.setItem("user", JSON.stringify(res.data.user ?? { email }));
 
-    // ✅ 새로고침으로 세션 반영 보장
+    // 새로고침으로 세션 반영 보장
     window.location.href = "/reservation";
 
   } catch (err) {

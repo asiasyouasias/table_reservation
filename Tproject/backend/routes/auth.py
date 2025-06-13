@@ -50,9 +50,9 @@ def create_user():
         conn.close()
 
 # 로그인
-@auth_bp.route("/api/login", methods=["POST", "OPTIONS"])  # ✅ OPTIONS 추가
+@auth_bp.route("/api/login", methods=["POST", "OPTIONS"]) 
 def login():
-    if request.method == "OPTIONS":  # ✅ CORS preflight 대응
+    if request.method == "OPTIONS": 
         return '', 204
 
     data = request.get_json()

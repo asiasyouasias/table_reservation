@@ -17,7 +17,7 @@ def log_session_cookie():
 
 
 
-# ✅ CORS 설정
+# CORS 설정
 CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
 
 @app.before_request
@@ -26,13 +26,11 @@ def log_session_cookie():
     print("💥 Flask 세션 내부 이메일:", session.get("email"))
     print("💥 Flask 세션 내부 전체:", dict(session))
 
-# ✅ 세션 쿠키가 크로스사이트에서 동작하도록 설정
+# 세션 쿠키 설정
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-app.config['SESSION_COOKIE_SECURE'] = False  # ⚠️ HTTPS 환경이면 True로 바꾸기
+app.config['SESSION_COOKIE_SECURE'] = False 
 #app.config['SESSION_COOKIE_DOMAIN'] = 'localhost' 
 
-
-# ✅ 블루프린트 등록
 app.register_blueprint(auth_bp)
 app.register_blueprint(reservation_bp)
 app.register_blueprint(table_bp)

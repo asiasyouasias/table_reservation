@@ -46,6 +46,10 @@ def make_reservation():
 
 
     # 유효성 검사
+    if not name.strip():
+        return jsonify({"success": False, "message": "이름은 비워둘 수 없습니다."}), 400
+    if not isinstance(quantity, int) or quantity < 1:
+        return jsonify({"success": False, "message": "예약 인원은 1명 이상이어야 합니다."}), 400
     if not is_valid_phone(phone):
         return jsonify({"success": False, "message": "전화번호 형식이 올바르지 않습니다"}), 400
     if not is_valid_credit(credit):

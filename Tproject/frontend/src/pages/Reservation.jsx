@@ -73,9 +73,7 @@ export default function Reservation() {
     }
 
     if (selected.getTime() === today.getTime()) {
-      alert("당일 예약은 불가합니다.");
-      setTables([]);
-      return;
+      alert("당일 예약 또는 취소가 불가합니다.");
     }
 
     if (selected > maxDate) {
@@ -89,7 +87,7 @@ export default function Reservation() {
         params: { date, meal },
         withCredentials: true,
       });
-      setTables(res.data); // ✅ 전체 응답이 배열이면 이렇게 받는다
+      setTables(res.data); 
     } catch (err) {
       console.error("에러:", err.response?.data || err.message);
       alert("테이블 불러오기 실패");
@@ -116,7 +114,7 @@ export default function Reservation() {
           quantity: guestCount,
         },
         {
-          withCredentials: true, // ✅ 반드시 세 번째 인자로
+          withCredentials: true, 
           headers: {
             "Content-Type": "application/json",
           },
@@ -151,7 +149,6 @@ export default function Reservation() {
 };
 
 
-  // ✅ JSX는 반드시 return 안에 있어야 함!
   return (
     <div className="App">
       <h2>테이블 예약</h2>
@@ -205,16 +202,28 @@ export default function Reservation() {
                   transition: "all 0.3s",
                 }}
                 onClick={() => {
+                  const isToday = new Date(date).toDateString() === new Date().toDateString();
+
                   if (table.is_reserved && !table.is_mine) {
                     alert("이미 예약된 테이블입니다.");
                     return;
                   }
+
                   if (table.is_reserved && table.is_mine) {
-                    const confirmed =
-                      window.confirm("해당 예약을 취소하시겠습니까?");
+                    if (isToday) {
+                      alert("당일 예약은 취소할 수 없습니다.");
+                      return;
+                    }
+                    const confirmed = window.confirm("해당 예약을 취소하시겠습니까?");
                     if (confirmed) cancelReservation(table.id);
                     return;
                   }
+
+                  if (isToday) {
+                    alert("당일 예약은 불가합니다.");
+                    return;
+                    }
+
                   setSelectedTable(table);
                   setGuestCount(1);
                   setShowPopup(true);
@@ -236,7 +245,7 @@ export default function Reservation() {
       {showPopup && selectedTable && (
         <div className="popup-overlay">
           <div className="popup">
-            <h3>{selectedTable.location} 테이블 예약</h3>
+            <h3> [{meal === "lunch" ? "점심" : "저녁"}] {translateLocation(selectedTable.location)} 테이블 예약</h3>
             <p>최대 수용 인원: {selectedTable.capacity}명</p>
 
             <input
