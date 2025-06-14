@@ -160,6 +160,7 @@ export default function Reservation() {
         min={minDate}
         value={date}
         onChange={(e) => setDate(e.target.value)}
+        onKeyDown={(e) => e.preventDefault()}
       />
       <select onChange={(e) => setTime(e.target.value)} value={meal}>
         <option value="lunch">점심</option>
